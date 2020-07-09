@@ -5,12 +5,12 @@ on:
     types: [started]
     
 env:
-  ROM_URL: https://oxygenos.oneplus.net/OnePlus6TOxygen_34_OTA_045_all_2004142152_09a6b6789a7843e6.zip
-  ROM_NAME: OxygenOS
-  BUILD_AB: true
-  BUILD_AONLY: false
-  ROM_AONLY: oneplus6.7z
-  ROM_AB: oneplus6AB.7z
+  ROM_URL: https://sourceforge.net/projects/xiaomi-eu-multilang-miui-roms/files/xiaomi.eu/MIUI-WEEKLY-RELEASES/20.6.18/xiaomi.eu_multi_MI6X_20.6.18_v12-9.zip
+  ROM_NAME: MIUI11
+  BUILD_AB: false
+  BUILD_AONLY: true
+  ROM_AONLY: mi6x.7z
+  ROM_AB: mi6x.7z
 
 jobs:
   build:
