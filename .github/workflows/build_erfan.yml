@@ -1,25 +1,34 @@
-name: build_erfan
+name: Easy GSI..
 
 on:
+#  release:
+#    types: [published]
+#  push:
+#    branches:
+#      - master
+#  pull_request:
+#    branches:
+#      - master
+#    paths:
+#      - '.config'
+#  schedule:
+#    - cron: 0 8 * * 5
   watch:
     types: [started]
     
 env:
   ROM_URL: https://bigota.d.miui.com/V12.0.3.0.QFCMIXM/miui_PYXISGlobal_V12.0.3.0.QFCMIXM_fde3fd51d2_10.0.zip
   ROM_NAME: MIUI
-  BUILD_AB: true
-  BUILD_AONLY: false
-  ROM_AONLY: mi9lite.7z
-  ROM_AB: mi9lite.7z
-
+  ZIP_NAME: Mi9lite
+  TZ: Asia/Kolkata
+  MIR: wet
 jobs:
   build:
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
-
     steps:
        - name: Checkout
-         uses: actions/checkout@master
+         uses: actions/checkout@main
        
        - name: Clean Up
          run: |
@@ -30,13 +39,13 @@ jobs:
            sudo -E apt-get -y autoremove --purge
            sudo -E apt-get clean 
            
-       - name: Initialization environment
+       - name: Initializing environment
          run: |
             sudo -E apt-get -qq update
-            sudo -E apt-get -qq install git openjdk-8-jdk p7zip
+            sudo -E apt-get -qq install git openjdk-8-jdk wget
        
        - name: Clone ErfanGSI Source Code
-         run: git clone --recurse-submodules https://github.com/erfanoabdi/ErfanGSIs.git
+         run: git clone --recurse-submodules https://github.com/leeminh888/ErfanGSIs
        
        - name: Setting up ErfanGSI requirements
          run: |
@@ -44,34 +53,29 @@ jobs:
               cd ErfanGSIs
               sudo bash setup.sh
        
-       - name: Download Stock Rom & Generate Aonly GSI
-         if: env.BUILD_AONLY == 'true'
-         run: sudo ./ErfanGSIs/url2GSI.sh -a $ROM_URL $ROM_NAME
+       - name: Download Stock Rom & Generate GSI
+         run: sudo ./ErfanGSIs/url2GSI.sh $ROM_URL $ROM_NAME
        
-       - name: 7z Aonly GSI
-         if: env.BUILD_AONLY == 'true'
-         run: 7za a -t7z -r $ROM_AONLY ErfanGSIs/output/*
-       
-       - name: Upload Aonly GSI to WeTransfer
-         if: env.BUILD_AONLY == 'true'
+       - name: Zip Aonly and upload 
          run: |
+              mkdir final
+              sudo chmod -R 777 ErfanGSIs/output
+              cd ErfanGSIs/output
+              zip -r $ZIP_NAME-GSI-Aonly.7z *-Aonly-*.img
               curl -sL https://git.io/file-transfer | sh
-              ./transfer bit $ROM_AONLY
-           
-       - name: Clear output
-         if: env.BUILD_AB == 'true'
-         run: sudo rm -rf ErfanGSIs/output/*
-         
-       - name: Download Stock Rom & Generate AB GSI
-         if: env.BUILD_AB == 'true'
-         run: sudo ./ErfanGSIs/url2GSI.sh -b $ROM_URL $ROM_NAME
-
-       - name: 7z AB GSI
-         if: env.BUILD_AB == 'true'
-         run: 7za a -t7z -r $ROM_AB ErfanGSIs/output/*
-
-       - name: Upload AB GSI to WeTransfer
-         if: env.BUILD_AB == 'true'
+              ./transfer $MIR $ZIP_NAME-GSI-Aonly.7z          
+       - name: Zip AB and upload 
          run: |
-              curl -sL https://git.io/file-transfer | sh
-              ./transfer bit $ROM_AB
+              cd ErfanGSIs/output
+              zip -r $ZIP_NAME-GSI-AB.7z *-AB-*.img
+              ./transfer $MIR $ZIP_NAME-GSI-AB.7z      
+       - name: Print build info
+         run: |
+              cat ErfanGSIs/output/*-Aonly-*.txt
+       - name: Upload Link to GitHub
+         run: |
+           git config --global user.email "19506021+Leminh8686@users.noreply.github.com"
+           git config --global user.name "Leminh8686"
+           git add link.txt
+           git commit -sm "upload link"
+           git push
