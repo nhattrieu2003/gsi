@@ -5,12 +5,12 @@ on:
     types: [started]
     
 env:
-  ROM_URL: https://sourceforge.net/projects/xiaomi-eu-multilang-miui-roms/files/xiaomi.eu/MIUI-WEEKLY-RELEASES/20.6.18/xiaomi.eu_multi_MI6X_20.6.18_v12-9.zip
-  ROM_NAME: MIUI11
-  BUILD_AB: false
-  BUILD_AONLY: true
-  ROM_AONLY: mi6x.7z
-  ROM_AB: mi6x.7z
+  ROM_URL: https://bigota.d.miui.com/V12.0.3.0.QFCMIXM/miui_PYXISGlobal_V12.0.3.0.QFCMIXM_fde3fd51d2_10.0.zip
+  ROM_NAME: MIUI12
+  BUILD_AB: true
+  BUILD_AONLY: false
+  ROM_AONLY: mi9lite.7z
+  ROM_AB: mi9lite.7z
 
 jobs:
   build:
